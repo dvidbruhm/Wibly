@@ -7,29 +7,37 @@ from utils import *
 import camera
 import math
 
+class Leg():
+    def __init__(self, lenght):
+        self.lenght
+
 class Humanoid(Entity):
-    def __init__(self, position, rotation=90, scale=1, size=1, speed=100):
+    def __init__(self, position, rotation=0, scale=1, size=1, speed=100):
         Entity.__init__(self, position, rotation, scale)
         self.size = size
         self.speed = speed
 
         self.rect = pygame.Rect((self.position[0] - self.size/2, self.position[1] - self.size/2, self.size, self.size/2))
 
-        self.leg_length = size/2
-        self.leg_dir = pygame.math.Vector2(0.5, 0.0).normalize()
+        self.leg_lenght = size
+        self.left_leg_dir = pygame.math.Vector2(-0.5, 0.0).normalize()
+        self.right_leg_dir = pygame.math.Vector2(0.5, 0.0).normalize()
 
-        self.left_leg_pos = pygame.math.Vector2(self.rect.centerx - (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
-        self.left_leg_dest = pygame.math.Vector2(self.rect.centerx - (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
-        self.left_leg_start = pygame.math.Vector2(self.rect.centerx - (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
+        self.left_leg_pos = pygame.math.Vector2(self.rect.centerx + (self.left_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.left_leg_dir.y * self.leg_lenght))
+        self.left_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.left_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.left_leg_dir.y * self.leg_lenght))
+        self.left_leg_start = pygame.math.Vector2(self.rect.centerx + (self.left_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.left_leg_dir.y * self.leg_lenght))
 
-        self.right_leg_pos = pygame.math.Vector2(self.rect.centerx + (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
-        self.right_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
-        self.right_leg_start = pygame.math.Vector2(self.rect.centerx + (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
+        self.right_leg_pos = pygame.math.Vector2(self.rect.centerx + (self.right_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.right_leg_dir.y * self.leg_lenght))
+        self.right_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.right_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.right_leg_dir.y * self.leg_lenght))
+        self.right_leg_start = pygame.math.Vector2(self.rect.centerx + (self.right_leg_dir.x * self.leg_lenght/2), self.rect.centery + (self.right_leg_dir.y * self.leg_lenght))
 
         self.surface = pygame.Surface((self.rect.w, self.rect.h))
 
+        self.step_speed = 0.2
+        self.current_delay_time = 0
+        self.last_moved = "none"
 
-        self.time_to_move = 0.1
+        self.time_to_move = 0.05
         self.left_timer = 0
         self.left_moving = False
 
@@ -37,7 +45,9 @@ class Humanoid(Entity):
         self.right_moving = False
 
     def update(self, dt):
-        self.move(dt)
+        displacement = self.move_inputs()
+        self.move_body(dt, displacement)
+        self.move_legs(dt)
 
     def render(self, screen):
 
@@ -74,7 +84,8 @@ class Humanoid(Entity):
 
         #screen.blit(self.surface, screen_pos)
 
-    def move(self, dt):
+    def move_inputs(self):
+
         up = InputManager.get_action(InputManager.Actions.MOVEUP)
         down = InputManager.get_action(InputManager.Actions.MOVEDOWN)
         left = InputManager.get_action(InputManager.Actions.MOVELEFT)
@@ -92,25 +103,42 @@ class Humanoid(Entity):
         elif left:
             displacement.x -= 1
 
+        return displacement
+
+    def move_body(self, dt, displacement):
 
         if displacement.length() > 0:
+
+            displacement = displacement.normalize()
+
             angle = angle_between(np.array(displacement), np.array((1, 0))) * 180 / 3.1416 + 90
-            if displacement[1] >= 1:
+            if displacement[1] > 0:
                 angle *= -1
-            print(angle)
+
+            self.left_leg_dir.x = displacement[0]
+            self.left_leg_dir.y = displacement[1]
+            self.left_leg_dir = self.left_leg_dir.rotate(45)
+
+            self.right_leg_dir.x = displacement[0]
+            self.right_leg_dir.y = displacement[1]
+            self.right_leg_dir = self.right_leg_dir.rotate(-45)
+
             self.rotation = angle 
             
             self.rect = self.rect.move(displacement.normalize() * self.speed * dt)
 
-        self.move_legs(dt)
 
     def move_legs(self, dt):
 
-        if self.left_leg_pos.distance_to(self.rect.center) > self.leg_length:
+        self.current_delay_time += dt
+
+        if self.left_leg_pos.distance_to(self.rect.center) > self.leg_lenght and self.current_delay_time >= self.step_speed and self.last_moved != "left":
             self.left_leg_start = self.left_leg_pos
-            self.left_leg_dest = pygame.math.Vector2(self.rect.centerx - (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
+            self.left_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.left_leg_dir.x * self.leg_lenght), self.rect.centery + (self.left_leg_dir.y * self.leg_lenght))
             self.left_moving = True
             self.left_timer = 0
+            self.current_delay_time = 0
+            self.last_moved = "left"
 
 
         if self.left_moving:
@@ -123,11 +151,13 @@ class Humanoid(Entity):
             self.left_leg_pos = self.left_leg_start.lerp(self.left_leg_dest, (self.left_timer / self.time_to_move))
 
 
-        if self.right_leg_pos.distance_to(self.rect.center) > self.leg_length:
+        if self.right_leg_pos.distance_to(self.rect.center) > self.leg_lenght and self.current_delay_time >= self.step_speed and self.last_moved != "right":
             self.right_leg_start = self.right_leg_pos
-            self.right_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.leg_dir.x * self.leg_length/2), self.rect.centery + (self.leg_dir.y * self.leg_length))
+            self.right_leg_dest = pygame.math.Vector2(self.rect.centerx + (self.right_leg_dir.x * self.leg_lenght), self.rect.centery + (self.right_leg_dir.y * self.leg_lenght))
             self.right_moving = True
             self.right_timer = 0
+            self.current_delay_time = 0
+            self.last_moved = "right"
 
 
         if self.right_moving:
