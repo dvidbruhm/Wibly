@@ -12,10 +12,12 @@ class Leg():
         self.lenght
 
 class Humanoid(Entity):
-    def __init__(self, position, rotation=0, scale=1, size=1, speed=100):
+    def __init__(self, position, rotation=90, scale=1, size=1, speed=200):
         Entity.__init__(self, position, rotation, scale)
         self.size = size
         self.speed = speed
+
+        self.turn_speed = 5
 
         self.rect = pygame.Rect((self.position[0] - self.size/2, self.position[1] - self.size/2, self.size, self.size/2))
 
@@ -33,11 +35,11 @@ class Humanoid(Entity):
 
         self.surface = pygame.Surface((self.rect.w, self.rect.h))
 
-        self.step_speed = 0.2
+        self.step_speed = 0.1
         self.current_delay_time = 0
         self.last_moved = "none"
 
-        self.time_to_move = 0.05
+        self.time_to_move = 0.1
         self.left_timer = 0
         self.left_moving = False
 
@@ -111,26 +113,39 @@ class Humanoid(Entity):
 
             displacement = displacement.normalize()
 
-            angle = angle_between(np.array(displacement), np.array((1, 0))) * 180 / 3.1416 + 90
-            if displacement[1] > 0:
-                angle *= -1
+            angle = angle_between(np.array(displacement), np.array((0, -1)))
 
             self.left_leg_dir.x = displacement[0]
             self.left_leg_dir.y = displacement[1]
-            self.left_leg_dir = self.left_leg_dir.rotate(45)
+            self.left_leg_dir = self.left_leg_dir.rotate(25)
 
             self.right_leg_dir.x = displacement[0]
             self.right_leg_dir.y = displacement[1]
-            self.right_leg_dir = self.right_leg_dir.rotate(-45)
+            self.right_leg_dir = self.right_leg_dir.rotate(-25)
 
-            self.rotation = angle 
-            
+            if displacement[0] > 0:
+                angle *= -1
+
+            delta_angle = angle - self.rotation
+            # TEMP TODO: fix lerp problem when angle goes for + to -
+            if delta_angle - angle > 180:
+                angle -= 360
+            elif delta_angle - angle < 180:
+                angle += 360
+
+            self.rotation = lerp(self.rotation, angle, dt * self.turn_speed)
+
+            print(angle)
+
             self.rect = self.rect.move(displacement.normalize() * self.speed * dt)
 
 
     def move_legs(self, dt):
 
         self.current_delay_time += dt
+
+        if self.current_delay_time > self.step_speed:
+            self.last_moved = "none"
 
         if self.left_leg_pos.distance_to(self.rect.center) > self.leg_lenght and self.current_delay_time >= self.step_speed and self.last_moved != "left":
             self.left_leg_start = self.left_leg_pos
