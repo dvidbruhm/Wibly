@@ -6,14 +6,14 @@ import entity as EntityManager
 import settings
 import camera
 
-from humanoid import Humanoid
+from creature import Creature
 from tile import Tile
 
 pygame.init()
 screen = pygame.display.set_mode(settings.window_size)
 clock = pygame.time.Clock()
 
-player = Humanoid(pygame.math.Vector2(200, 200), size=60)
+player = Creature(pygame.math.Vector2(200, 200), size=60)
 EntityManager.add(player)
 
 camera.main.follow(player)

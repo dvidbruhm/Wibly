@@ -49,3 +49,8 @@ def slerp(a, b, time):
         a = a.normalize()
     return a.slerp(b, time)
 
+def tuple_add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
+
+def tuple_mul(a, b):
+    return (a[0] * b[0], a[1] * b[1])
