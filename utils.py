@@ -8,6 +8,9 @@ import numpy as np
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
 
 def world_to_screen(input):
     center_window = [a / 2 for a in settings.window_size]
@@ -31,10 +34,18 @@ def unit_vector(vector):
 def angle_between(v1, v2):
     v1_u = unit_vector(v1)
     v2_u = unit_vector(v2)
-    print(np.dot(v1_u, v2_u))
     angle = np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)) * 180 / 3.1416
     return angle
 def lerp(a, b, time):
     if time > 1 or time < 0:
         raise Exception("Value has to be between 0 and 1 for lerp.")
     return a + time * (b - a)
+
+def slerp(a, b, time):
+    angle = angle_between(np.array(a), np.array(b))
+    if angle >= 179:
+        a.x += 0.01
+        a.y += 0.01
+        a = a.normalize()
+    return a.slerp(b, time)
+
