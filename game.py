@@ -13,7 +13,7 @@ pygame.init()
 screen = pygame.display.set_mode(settings.window_size)
 clock = pygame.time.Clock()
 
-player = Humanoid(pygame.math.Vector2(200, 200), size=30)
+player = Humanoid(pygame.math.Vector2(200, 200), size=60)
 EntityManager.add(player)
 
 camera.main.follow(player)
