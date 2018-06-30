@@ -13,11 +13,10 @@ pygame.init()
 screen = pygame.display.set_mode(settings.window_size)
 clock = pygame.time.Clock()
 
-player = Creature(pygame.math.Vector2(200, 200), size=60)
+player = Creature(pygame.math.Vector2(200, 200), size=30)
 EntityManager.add(player)
 
 camera.main.follow(player)
-EntityManager.add(camera.main)
 
 tile = Tile(pygame.math.Vector2(300, 300))
 EntityManager.add(tile)
@@ -29,10 +28,15 @@ def handle_inputs():
     for event in InputManager.events:
         if event.type == pygame.QUIT: 
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                settings.debug = not settings.debug
 
 
 def update():
     dt = clock.tick(30) / 1000 # in seconds
+
+    camera.main.update(dt)
 
     for entity in EntityManager.entities:
         entity.update(dt)

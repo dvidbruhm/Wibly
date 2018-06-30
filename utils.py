@@ -5,6 +5,9 @@ import settings
 
 import numpy as np
 
+
+PI = 3.1415
+
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -41,6 +44,17 @@ def lerp(a, b, time):
         raise Exception("Value has to be between 0 and 1 for lerp.")
     return a + time * (b - a)
 
+def lerp_angle(a, b, t):
+    if abs(a-b) >= 180:
+        if a > b:
+            a = normalize_angle(a) - 2.0 * 180
+        else:
+            b = normalize_angle(b) - 2.0 * 180
+    return lerp(a, b, t)
+
+def normalize_angle(x):
+    return ((x + 180) % (2.0*180)) - 180
+
 def slerp(a, b, time):
     angle = angle_between(np.array(a), np.array(b))
     if angle >= 179:
@@ -54,3 +68,4 @@ def tuple_add(a, b):
 
 def tuple_mul(a, b):
     return (a[0] * b[0], a[1] * b[1])
+
