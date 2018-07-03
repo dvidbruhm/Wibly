@@ -17,6 +17,10 @@ class Creature(Entity):
 
         self.turn_speed = turn_speed
 
+        self.head = None
+        self.bodies = []
+        self.arms = []
+
     def render(self, screen):
         for body in self.bodies:
             body.render(screen)

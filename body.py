@@ -22,7 +22,7 @@ class Body(Entity):
         self.surface = pygame.Surface((self.rect.w, self.rect.h))
 
         self.attached_body = None
-    
+
     def render(self, screen):
         super(Body, self).render(screen)
 
@@ -70,8 +70,7 @@ class Body(Entity):
         for leg in self.legs:
             leg.update(dt)
 
-    def add_leg(self, length, angle, speed, offset=(0, 0)):
-        leg = Leg(self, length, angle, speed, offset=offset)
+    def add_leg(self, leg):
         self.legs.append(leg)
 
     def attach_to(self, other_body):

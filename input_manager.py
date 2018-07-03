@@ -8,6 +8,7 @@ class Actions(Enum):
     MOVEDOWN = 'moveudown'
     MOVELEFT = 'moveleft'
     MOVERIGHT = 'moveright'
+    PUNCH = 'punch'
 
 key_bindings = {
     Actions.QUIT: pygame.K_ESCAPE,
@@ -15,7 +16,8 @@ key_bindings = {
     Actions.MOVEUP : pygame.K_w,
     Actions.MOVEDOWN : pygame.K_s,
     Actions.MOVELEFT : pygame.K_a,
-    Actions.MOVERIGHT : pygame.K_d
+    Actions.MOVERIGHT : pygame.K_d,
+    Actions.PUNCH : pygame.K_SPACE
 }
 
 events = []
@@ -31,3 +33,11 @@ def set_frame_events():
 
 def get_action(action):
     return pressed[key_bindings[action]]
+
+def get_action_down(action):
+    global events
+    for event in events:
+        if event.type == pygame.KEYDOWN:
+            if event.key == key_bindings[action]:
+                return True
+    return False

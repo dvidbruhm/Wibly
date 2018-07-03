@@ -18,8 +18,8 @@ class Entity:
         if settings.debug:
             screen_pos = world_to_screen(self.position)
             # Draw forward and right vector
-            forward = (screen_pos[0] + self.get_forward()[0]*50, screen_pos[1] + self.get_forward()[1]*50)
-            right = (screen_pos[0] + self.get_right()[0]*50, screen_pos[1] + self.get_right()[1]*50)
+            forward = (screen_pos[0] + self.get_forward()[0]*20, screen_pos[1] + self.get_forward()[1]*20)
+            right = (screen_pos[0] + self.get_right()[0]*20, screen_pos[1] + self.get_right()[1]*20)
 
             pygame.draw.line(screen, Color.BLUE, screen_pos, forward, 1)
             pygame.draw.line(screen, Color.GREEN, screen_pos, right, 1)

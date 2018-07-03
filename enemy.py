@@ -3,28 +3,29 @@ import random
 
 from creature import Creature
 from body import Body
+from leg import Leg
 
 class Enemy(Creature):
     def __init__(self, position, rotation=90, scale=1, size=50, speed=100, turn_speed=5):
         Creature.__init__(self, position, rotation, scale, size, speed, turn_speed)
 
-        self.head = Body(self, self.position, self.rotation, self.size, self.size, head=True)
+        self.head = Body(self, self.position, self.rotation, self.size*2, self.size*2, head=True)
 
-        self.bodies = [
-            self.head
-        ]
+        self.bodies.append(self.head)
 
         for i in range(4):
-            b = Body(self, self.position, self.rotation, self.size, self.size/2)
+            b = Body(self, self.position, self.rotation, self.size, self.size)
             b.attach_to(self.bodies[i])
             self.bodies.append(b)
 
-        for body in self.bodies:
-            body.add_leg(self.size, 15, 20, (body.width/2, 0))
-            body.add_leg(self.size, -15, 20, (-body.width/2, 0))
+        for body in self.bodies:    
+            leg = Leg(body, self.size*2, 15, 40, (body.width/2, 0), 3)
+            body.add_leg(leg)
+            leg = Leg(body, self.size*2, -15, 40, (-body.width/2, 0), 3)
+            body.add_leg(leg)
 
         self.wander_time = 2
-        self.timer = 0
+        self.timer = random.random() * self.wander_time
 
         self.displacement = Vector2(0, 0)
 

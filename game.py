@@ -20,7 +20,7 @@ EntityManager.add(player)
 camera.main.follow(player)
 
 for i in range(20):
-    enemy = Enemy(pygame.math.Vector2(100, 100), size=20)
+    enemy = Enemy(pygame.math.Vector2(100, 100), size=10, speed=200)
     EntityManager.add(enemy)
 
 tile = Tile(pygame.math.Vector2(300, 300))
@@ -30,15 +30,16 @@ def handle_inputs():
     InputManager.set_frame_pressed()
     InputManager.set_frame_events()
 
+    if InputManager.get_action_down(InputManager.Actions.DEBUG):
+        settings.debug = not settings.debug
+
     for event in InputManager.events:
         if event.type == pygame.QUIT: 
             sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == InputManager.key_bindings[InputManager.Actions.DEBUG]:
-                settings.debug = not settings.debug
+                
 
 def update():
-    dt = clock.tick(30) / 1000 # in seconds
+    dt = clock.tick(settings.fps) / 1000 # in seconds
 
     camera.main.update(dt)
 
