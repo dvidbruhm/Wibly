@@ -3,6 +3,7 @@ from enum import Enum
 
 class Actions(Enum):
     QUIT = 'quit'
+    DEBUG = 'debug'
     MOVEUP = 'moveup'
     MOVEDOWN = 'moveudown'
     MOVELEFT = 'moveleft'
@@ -10,6 +11,7 @@ class Actions(Enum):
 
 key_bindings = {
     Actions.QUIT: pygame.K_ESCAPE,
+    Actions.DEBUG: pygame.K_TAB,
     Actions.MOVEUP : pygame.K_w,
     Actions.MOVEDOWN : pygame.K_s,
     Actions.MOVELEFT : pygame.K_a,
@@ -28,12 +30,4 @@ def set_frame_events():
     events = pygame.event.get()
 
 def get_action(action):
-    
     return pressed[key_bindings[action]]
-
-    for event in events:
-        if event.type == pygame.KEYDOWN:
-            if key_bindings[action] == event.key:
-                return True
-
-    return False

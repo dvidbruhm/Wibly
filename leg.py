@@ -1,6 +1,7 @@
 import pygame
 from pygame.math import Vector2
 
+from color import Color
 from utils import *
 from entity import Entity
 
@@ -37,8 +38,6 @@ class Leg():
 
             attach = pygame.draw.circle(screen, Color.WHITE, attach_pos, 2)
 
-
-
     def update(self, dt):
 
         self.direction = self.attached_body.get_forward().rotate(self.angle)
@@ -50,6 +49,7 @@ class Leg():
     def move_foot(self):
 
         attach_pos = self.attached_body.get_position() + self.get_rel_offset()
+
 
         if self.foot_position.distance_to(attach_pos) > self.length:
             self.foot_destination = Vector2(attach_pos.x + (self.direction.x * self.length), attach_pos.y + (self.direction.y * self.length))

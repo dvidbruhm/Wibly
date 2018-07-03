@@ -1,7 +1,8 @@
 import pygame
 
 from entity import Entity
-from utils import world_to_screen, Color
+from color import Color
+from utils import world_to_screen
 
 class Tile(Entity):
     def __init__(self, position, size=32):

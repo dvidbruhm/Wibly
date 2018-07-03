@@ -1,7 +1,8 @@
 import pygame
 
 import settings
-from utils import world_to_screen, Color
+from color import Color
+from utils import world_to_screen
 
 entities = []
 
@@ -49,4 +50,4 @@ class Entity:
         return self.direction
 
     def get_right(self):
-        return (-self.direction[1], self.direction[0])
+        return pygame.math.Vector2(-self.direction[1], self.direction[0])

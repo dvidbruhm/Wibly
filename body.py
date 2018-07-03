@@ -1,6 +1,7 @@
 import pygame
 from pygame.math import Vector2
 
+from color import Color
 from utils import *
 from entity import Entity
 from leg import Leg
@@ -20,6 +21,7 @@ class Body(Entity):
         self.rect = pygame.Rect((self.position[0] - self.width/2, self.position[1] - self.height/2, self.width, self.height))
         self.surface = pygame.Surface((self.rect.w, self.rect.h))
 
+        self.attached_body = None
     
     def render(self, screen):
         super(Body, self).render(screen)
@@ -44,6 +46,9 @@ class Body(Entity):
         for leg in self.legs:
             leg.render(screen)
 
+        if settings.debug:
+            if self.attached_body:
+                pygame.draw.line(screen, Color.YELLOW, world_to_screen(self.get_position()), world_to_screen(self.attached_body.get_position()))
 
     def update(self, dt, new_pos, new_dir):
         self.direction = slerp(self.direction, new_dir, dt * self.creature.turn_speed)
@@ -68,3 +73,6 @@ class Body(Entity):
     def add_leg(self, length, angle, speed, offset=(0, 0)):
         leg = Leg(self, length, angle, speed, offset=offset)
         self.legs.append(leg)
+
+    def attach_to(self, other_body):
+        self.attached_body = other_body
