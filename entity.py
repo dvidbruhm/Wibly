@@ -4,19 +4,6 @@ import settings
 from color import Color
 from utils import world_to_screen
 
-entities = []
-
-def add(entity):
-    if isinstance(entity, Entity):
-        entities.append(entity)
-    else:
-        raise Exception("Can only add Entity to list.")
-
-def remove(entity):
-    entities.remove(entity)
-
-
-
 class Entity:
     def __init__(self, position, rotation, scale, direction):
         self.position = position

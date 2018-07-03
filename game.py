@@ -2,7 +2,7 @@ import pygame
 import sys
 
 import input_manager as InputManager
-import entity as EntityManager
+import entity_manager as EntityManager
 import settings
 import camera
 
