@@ -1,28 +1,43 @@
 import pygame
 import sys
+import pymunk
+import pymunk.pygame_util
 
 import input_manager as InputManager
 import entity_manager as EntityManager
 import settings
 import camera
+import physics
 
 from player import Player
 from enemy import Enemy
 from tile import Tile
 
+## Init pygame
 pygame.init()
 screen = pygame.display.set_mode(settings.window_size)
 clock = pygame.time.Clock()
 
+draw_options = pymunk.pygame_util.DrawOptions(screen)
+pymunk.pygame_util.positive_y_is_up = False
+
+
+## Init physics (pymunk)
+physics.init()
+
+## Add a player
 player = Player(pygame.math.Vector2(200, 200), size=30)
 EntityManager.add(player)
 
+## Make camera follow player
 camera.main.follow(player)
 
-for i in range(20):
+## Add enemies
+for i in range(5):
     enemy = Enemy(pygame.math.Vector2(100, 100), size=10, speed=200)
     EntityManager.add(enemy)
 
+## Add a tile
 tile = Tile(pygame.math.Vector2(300, 300))
 EntityManager.add(tile)
 
@@ -46,6 +61,9 @@ def update():
     for entity in EntityManager.entities:
         entity.update(dt)
 
+    physics.update()
+
+
 def render():
     screen.fill((0, 0, 0))
 
@@ -54,5 +72,8 @@ def render():
     for entity in EntityManager.entities:
         if camera.main.is_visible(entity):
             entity.render(screen)
+
+    if settings.debug:
+        physics.space.debug_draw(draw_options)
 
     pygame.display.flip()

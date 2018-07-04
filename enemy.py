@@ -39,4 +39,4 @@ class Enemy(Creature):
             else:
                 self.displacement = Vector2(0, 0)
 
-        self.move_body(dt, self.displacement)
+        self.move_bodies(dt, self.displacement)

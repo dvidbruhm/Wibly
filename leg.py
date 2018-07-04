@@ -4,6 +4,7 @@ from pygame.math import Vector2
 from color import Color
 from utils import *
 from entity import Entity
+import physics
 
 class Leg():
     def __init__(self, attached_body, length, angle, move_speed, offset=(0, 0), foot_size=5, walk=True):

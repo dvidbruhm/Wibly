@@ -5,6 +5,7 @@ from color import Color
 from utils import *
 from entity import Entity
 from leg import Leg
+import physics
 
 class Body(Entity):
     def __init__(self, creature, position, rotation, width, height, speed=10, head=False):
@@ -23,16 +24,21 @@ class Body(Entity):
 
         self.attached_body = None
 
+        self.physics_body = physics.add_circle_body(self.position, self.width/2, body_type="dynamic")
+
     def render(self, screen):
         super(Body, self).render(screen)
 
         screen_rect = world_to_screen(self.rect)
+        #print(self.physics_body.position)
+        screen_pos = world_to_screen(Vector2(self.physics_body.position))
+        #print(screen_pos)
 
         # Body surface
         body = pygame.draw.ellipse(self.surface, Color.WHITE, (0, 0, self.rect.w, self.rect.h), 1)
 
         # rotate body and correct center position
-        old_center = screen_rect.center
+        old_center = screen_pos
         rotated_surface = pygame.transform.rotate(self.surface, self.rotation)
         rotated_rect = rotated_surface.get_rect()
         rotated_rect.center = old_center
@@ -59,13 +65,15 @@ class Body(Entity):
             angle *= -1
 
         self.rotation = angle
+        self.physics_body.rotation = angle
 
         if not self.head:
-            self.rect.center = Vector2(self.rect.center).lerp(new_pos, dt * self.speed)
+            self.physics_body.position = Vector2(self.physics_body.position).lerp(new_pos, dt * self.speed)
         else:
-            self.rect.center = new_pos
+            self.physics_body.position = Vector2(self.physics_body.position).lerp(new_pos, dt * self.speed)
         
-        self.position = Vector2(self.rect.center)
+        self.position = Vector2(self.physics_body.position)
+        self.rect.center = Vector2(self.physics_body.position)
 
         for leg in self.legs:
             leg.update(dt)
