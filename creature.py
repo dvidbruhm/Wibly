@@ -31,10 +31,12 @@ class Creature(Entity):
 
     def move_bodies(self, dt, displacement):
 
+        self.position = Vector2(self.head.physics_body.position)
+        moving = False
         if displacement.length() > 0:
+            moving = True
             displacement = displacement.normalize()
             self.direction = slerp(self.direction, Vector2(displacement), dt * self.turn_speed)
-            self.position = self.head.position + self.head.direction * self.speed * dt * 4
             angle = angle_between(np.array(self.direction), np.array((0, -1)))
 
             if self.direction.x > 0:
@@ -46,14 +48,15 @@ class Creature(Entity):
             body = self.bodies[i]
             if i != 0:
                 prev_body = self.bodies[i-1]
-                pos = prev_body.rect.center - prev_body.get_forward()*(body.height + prev_body.height)/2
-                if displacement.length() > 0:
-                    dir = prev_body.direction
-                else:
-                    dir = body.direction
-                body.update(dt, pos, dir)
+                pos = prev_body.position - prev_body.get_forward()*(body.height + prev_body.height + 5) / 2
+                #if displacement.length() > 0:
+                #    dir = prev_body.direction
+                #else:
+                #    dir = body.direction
+                dir = prev_body.direction
+                body.update(dt, pos, dir, moving)
             else:
                 pos = self.get_position()
-                body.update(dt, pos, self.direction)
+                body.update(dt, pos, self.direction, moving)
 
 

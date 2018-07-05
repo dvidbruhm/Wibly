@@ -73,3 +73,9 @@ def tuple_mul(a, b):
 
 def get_time():
     return pygame.time.get_ticks()/1000
+
+def rad2deg(rad):
+    return rad * 180 / PI
+
+def deg2rad(deg):
+    return deg / 180 * PI

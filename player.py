@@ -11,12 +11,12 @@ class Player(Creature):
     def __init__(self, position, rotation=90, scale=1, size=50, speed=300, turn_speed=5):
         Creature.__init__(self, position, rotation, scale, size, speed, turn_speed)
 
-        self.head = Body(self, self.position, self.rotation, self.size, self.size, head=True)
+        self.head = Body(self, self.position, self.rotation, self.size, self.size, head=True, speed=speed)
 
         self.bodies.append(self.head)
 
-        for i in range(1):
-            b = Body(self, self.position, self.rotation, self.size/2, self.size/2)
+        for i in range(5):
+            b = Body(self, self.position, self.rotation, self.size/2, self.size/2, speed=10)
             b.attach_to(self.bodies[i])
             self.bodies.append(b)
         
@@ -28,8 +28,8 @@ class Player(Creature):
         #self.arms.append(arm2)
 
         for body in self.bodies:
-            body.add_leg(Leg(body, self.size, 15, 20, offset=(0, 0), foot_size=5))
-            body.add_leg(Leg(body, self.size, -15, 20, offset=(0, 0), foot_size=5))
+            body.add_leg(Leg(body, self.size, 15, 20, offset=(body.width/2, 0), foot_size=5))
+            body.add_leg(Leg(body, self.size, -15, 20, offset=(-body.width/2, 0), foot_size=5))
 
         self.arm_counter = 0
 

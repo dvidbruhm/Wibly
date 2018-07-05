@@ -31,12 +31,14 @@ class Leg():
         self.punching = False
         self.walk = walk
 
-    def render(self, screen):
-        attach_pos = world_to_screen(self.attached_body.get_position() + Vector2(self.get_rel_offset()))
+        self.attach_position = Vector2(0, 0)
 
-        leg = pygame.draw.line(screen, Color.WHITE, attach_pos, world_to_screen(self.foot_position))
+    def render(self, screen):
+        #attach_pos = world_to_screen(self.attached_body.physicsget_position() + Vector2(self.get_rel_offset()))
+
+        leg = pygame.draw.line(screen, Color.WHITE, world_to_screen(self.attach_position), world_to_screen(self.foot_position))
         foot = pygame.draw.circle(screen, Color.WHITE, world_to_screen(self.foot_position), self.foot_size, 1)
-        attach = pygame.draw.circle(screen, Color.WHITE, attach_pos, 2)
+        attach = pygame.draw.circle(screen, Color.WHITE, world_to_screen(self.attach_position), 2)
 
         if settings.debug:
             dest = pygame.draw.circle(screen, Color.GREEN, world_to_screen(self.foot_destination), self.foot_size)
@@ -56,13 +58,13 @@ class Leg():
 
     def move_foot(self):
 
-        attach_pos = self.attached_body.get_position() + self.get_rel_offset()
+        self.attach_position = Vector2(self.attached_body.physics_body.position) + self.get_rel_offset()
 
-        if self.foot_position.distance_to(attach_pos) > self.length:
-            self.foot_destination = Vector2(attach_pos.x + (self.direction.x * self.length), attach_pos.y + (self.direction.y * self.length))
+        if self.foot_position.distance_to(self.attach_position) > self.length:
+            self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
 
         if not self.walk:
-            self.foot_destination = Vector2(attach_pos.x + (self.direction.x * self.length), attach_pos.y + (self.direction.y * self.length))
+            self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
 
     def get_rel_offset(self):
         forward = self.attached_body.get_forward()

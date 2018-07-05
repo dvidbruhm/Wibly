@@ -58,10 +58,11 @@ def update():
 
     camera.main.update(dt)
 
+    physics.update()
+    
     for entity in EntityManager.entities:
         entity.update(dt)
 
-    physics.update()
 
 
 def render():
