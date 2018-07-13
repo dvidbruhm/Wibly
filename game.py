@@ -64,7 +64,6 @@ def update():
         entity.update(dt)
 
 
-
 def render():
     screen.fill((0, 0, 0))
 

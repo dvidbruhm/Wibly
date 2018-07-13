@@ -27,6 +27,8 @@ def add_circle_body(position, radius, mass=10, body_type="static"):
 
     shape = pymunk.Circle(body, radius)
     space.add(body, shape)
+    shape.filter = pymunk.ShapeFilter(categories=0x1)
+
     return body
 
 def add_polygon_body(points, mass=10, body_type="static"):
@@ -45,6 +47,10 @@ def add_polygon_body(points, mass=10, body_type="static"):
     shape = pymunk.Poly(body, points)
     space.add(body, shape)
     return body
+
+def segment_query_first(start, end, radius, filter=pymunk.ShapeFilter()):
+    global space
+    return space.segment_query_first(start, end, radius, filter)
 
 def update():
     global space

@@ -43,6 +43,12 @@ class Leg():
         if settings.debug:
             dest = pygame.draw.circle(screen, Color.GREEN, world_to_screen(self.foot_destination), self.foot_size)
 
+            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), self.foot_size)
+
+            if query_info is not None:
+                print(query_info.shape)
+                pygame.draw.circle(screen, Color.RED, world_to_screen(Vector2(query_info.point)), 2)
+
 
     def update(self, dt):
 
@@ -60,8 +66,14 @@ class Leg():
 
         self.attach_position = Vector2(self.attached_body.physics_body.position) + self.get_rel_offset()
 
+
         if self.foot_position.distance_to(self.attach_position) > self.length:
-            self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
+            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), self.foot_size)
+            if query_info is None:
+                self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
+            else:
+                self.foot_destination = Vector2(query_info.point)
+                #self.foot_destination = Vector2(collision_point., self.attach_position.y + (self.direction.y * self.length))
 
         if not self.walk:
             self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
