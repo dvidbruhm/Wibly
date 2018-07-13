@@ -21,4 +21,4 @@ class Tile(Entity):
 
     def render(self, screen):
         pos = world_to_screen(self.position)
-        tile = pygame.draw.rect(screen, Color.WHITE, (pos[0] - self.size/2, pos[1] - self.size/2, self.size, self.size))
+        tile = pygame.draw.rect(screen, Color.WHITE, (pos[0] - self.size/2, pos[1] - self.size/2, self.size, self.size), 1)

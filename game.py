@@ -8,6 +8,7 @@ import entity_manager as EntityManager
 import settings
 import camera
 import physics
+from map import Map
 
 from player import Player
 from enemy import Enemy
@@ -25,6 +26,9 @@ pymunk.pygame_util.positive_y_is_up = False
 ## Init physics (pymunk)
 physics.init()
 
+## Create map
+map = Map(1000)
+
 ## Add a player
 player = Player(pygame.math.Vector2(200, 200), size=30)
 EntityManager.add(player)
@@ -38,8 +42,9 @@ for i in range(5):
     EntityManager.add(enemy)
 
 ## Add a tile
-tile = Tile(pygame.math.Vector2(300, 300))
-EntityManager.add(tile)
+for i in range(20):
+    tile = Tile(pygame.math.Vector2(i * 32, 300))
+    EntityManager.add(tile)
 
 def handle_inputs():
     InputManager.set_frame_pressed()
@@ -63,11 +68,15 @@ def update():
     for entity in EntityManager.entities:
         entity.update(dt)
 
+    if settings.debug:
+        print(1 / dt, " FPS")
 
 def render():
     screen.fill((0, 0, 0))
 
     camera.main.render(screen)
+
+    map.render(screen)
 
     for entity in EntityManager.entities:
         if camera.main.is_visible(entity):

@@ -51,6 +51,23 @@ def add_polygon_body(points, mass=10, body_type="static"):
 def segment_query_first(start, end, radius, filter=pymunk.ShapeFilter()):
     global space
     return space.segment_query_first(start, end, radius, filter)
+def add_segment_body(start, end, mass=10, body_type="static"):
+    global space
+
+    points = [start, end]
+    moment = 1.0
+    body = pymunk.Body(mass, moment)
+
+    if body_type == "static":
+        body.body_type = pymunk.Body.STATIC
+    elif body_type == "dynamic":
+        body.body_type = pymunk.Body.DYNAMIC
+    elif body_type == "kinematic":
+        body.body_type = pymunk.Body.KINEMATIC
+
+    shape = pymunk.Segment(body, start, end, 1)
+    space.add(body, shape)
+    return body
 
 def update():
     global space
