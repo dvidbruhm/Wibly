@@ -20,10 +20,10 @@ class Map:
     
     def make_borders(self):
 
-        physics.add_segment_body(self.corners[0], self.corners[1])
-        physics.add_segment_body(self.corners[1], self.corners[2])
-        physics.add_segment_body(self.corners[2], self.corners[3])
-        physics.add_segment_body(self.corners[3], self.corners[0])
+        physics.add_segment_body(self.corners[0], self.corners[1], category=physics.Categories.WALL)
+        physics.add_segment_body(self.corners[1], self.corners[2], category=physics.Categories.WALL)
+        physics.add_segment_body(self.corners[2], self.corners[3], category=physics.Categories.WALL)
+        physics.add_segment_body(self.corners[3], self.corners[0], category=physics.Categories.WALL)
     
     def render_borders(self, screen):
         pygame.draw.line(screen, Color.WHITE, world_to_screen(self.corners[0]), world_to_screen(self.corners[1]))

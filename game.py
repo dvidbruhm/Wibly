@@ -37,9 +37,9 @@ EntityManager.add(player)
 camera.main.follow(player)
 
 ## Add enemies
-for i in range(5):
-    enemy = Enemy(pygame.math.Vector2(100, 100), size=10, speed=200)
-    EntityManager.add(enemy)
+#for i in range(5):
+#    enemy = Enemy(pygame.math.Vector2(100, 100), size=10, speed=200)
+#    EntityManager.add(enemy)
 
 ## Add a tile
 for i in range(20):
@@ -82,7 +82,7 @@ def render():
         if camera.main.is_visible(entity):
             entity.render(screen)
 
-    if settings.debug:
-        physics.space.debug_draw(draw_options)
+    #if settings.debug:
+    #    physics.space.debug_draw(draw_options)
 
     pygame.display.flip()

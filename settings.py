@@ -1,4 +1,4 @@
-window_size = (400, 400)
+window_size = (600, 600)
 fps = 60
 
 debug = False

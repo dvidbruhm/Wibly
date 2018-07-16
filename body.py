@@ -8,13 +8,14 @@ from leg import Leg
 import physics
 
 class Body(Entity):
-    def __init__(self, creature, position, rotation, width, height, speed=30, head=False):
+    def __init__(self, creature, position, rotation, width, height, physics_category, speed=30, head=False):
         Entity.__init__(self, position, rotation, 1, Vector2(1, 0))
         self.creature = creature
         self.height = height
         self.width = width
         self.head = head
         self.speed = speed
+        self.physics_category = physics_category
 
         self.legs = []
         self.direction = Vector2(1, 0)
@@ -23,7 +24,7 @@ class Body(Entity):
 
         self.attached_body = None
 
-        self.physics_body = physics.add_circle_body(self.position, self.width/2, body_type="dynamic")
+        self.physics_body = physics.add_circle_body(self.position, self.height/2, body_type="dynamic", category=self.physics_category)
 
     def render(self, screen):
         super(Body, self).render(screen)
@@ -32,6 +33,12 @@ class Body(Entity):
 
         # Body surface
         body = pygame.draw.ellipse(self.surface, Color.WHITE, (0, 0, self.width, self.height), 1)
+
+        #body = pygame.draw.line(self.surface, Color.WHITE, Vector2(self.width/2, self.height * 0.25), Vector2(0, self.height * 0.30))
+        #body = pygame.draw.line(self.surface, Color.WHITE, Vector2(self.width/2, self.height * 0.25), Vector2(self.width, self.height * 0.30))
+
+        #body = pygame.draw.line(self.surface, Color.WHITE, Vector2(self.width/2, self.height * 0.75), Vector2(0, self.height * 0.80))
+        #body = pygame.draw.line(self.surface, Color.WHITE, Vector2(self.width/2, self.height * 0.75), Vector2(self.width, self.height * 0.80))
 
         # rotate body and correct center position
         old_center = screen_pos

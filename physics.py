@@ -4,6 +4,12 @@ import settings
 
 space = None
 
+class Categories:
+    OTHER = 0
+    PLAYER = 1
+    ENEMY = 2
+    WALL = 3
+
 def init():
     global space
     space = pymunk.Space()
@@ -12,7 +18,7 @@ def init():
 
     #space.damping = 0
 
-def add_circle_body(position, radius, mass=10, body_type="static"):
+def add_circle_body(position, radius, mass=10, body_type="static", category=pymunk.ShapeFilter.ALL_CATEGORIES):
     global space
     moment = pymunk.moment_for_circle(mass, 0, radius)
     body = pymunk.Body(mass, moment)
@@ -26,12 +32,12 @@ def add_circle_body(position, radius, mass=10, body_type="static"):
         body.body_type = pymunk.Body.KINEMATIC
 
     shape = pymunk.Circle(body, radius)
+    shape.filter = pymunk.ShapeFilter(categories=category)
     space.add(body, shape)
-    shape.filter = pymunk.ShapeFilter(categories=0x1)
 
     return body
 
-def add_polygon_body(points, mass=10, body_type="static"):
+def add_polygon_body(points, mass=10, body_type="static", category=pymunk.ShapeFilter.ALL_CATEGORIES):
     global space
 
     moment = 1.0
@@ -45,13 +51,11 @@ def add_polygon_body(points, mass=10, body_type="static"):
         body.body_type = pymunk.Body.KINEMATIC
 
     shape = pymunk.Poly(body, points)
+    shape.filter = pymunk.ShapeFilter(categories=category)
     space.add(body, shape)
     return body
-
-def segment_query_first(start, end, radius, filter=pymunk.ShapeFilter()):
-    global space
-    return space.segment_query_first(start, end, radius, filter)
-def add_segment_body(start, end, mass=10, body_type="static"):
+    
+def add_segment_body(start, end, mass=10, body_type="static", category=pymunk.ShapeFilter.ALL_CATEGORIES):
     global space
 
     points = [start, end]
@@ -66,8 +70,14 @@ def add_segment_body(start, end, mass=10, body_type="static"):
         body.body_type = pymunk.Body.KINEMATIC
 
     shape = pymunk.Segment(body, start, end, 1)
+    shape.filter = pymunk.ShapeFilter(categories=category)
     space.add(body, shape)
     return body
+
+def segment_query_first(start, end, radius, category=pymunk.ShapeFilter.ALL_CATEGORIES):
+    global space
+    filter = pymunk.ShapeFilter(categories=category)
+    return space.segment_query_first(start, end, radius, filter)
 
 def update():
     global space

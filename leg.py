@@ -33,6 +33,8 @@ class Leg():
 
         self.attach_position = Vector2(0, 0)
 
+        self.lerping = False
+
     def render(self, screen):
         #attach_pos = world_to_screen(self.attached_body.physicsget_position() + Vector2(self.get_rel_offset()))
 
@@ -41,13 +43,15 @@ class Leg():
         attach = pygame.draw.circle(screen, Color.WHITE, world_to_screen(self.attach_position), 2)
 
         if settings.debug:
-            dest = pygame.draw.circle(screen, Color.GREEN, world_to_screen(self.foot_destination), self.foot_size)
 
-            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), self.foot_size)
+            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), 1, category=physics.Categories.WALL)
+            pygame.draw.line(screen, Color.RED, world_to_screen(self.attach_position), world_to_screen(self.attach_position + (self.direction * self.length)), 1)
 
             if query_info is not None:
-                print(query_info.shape)
-                pygame.draw.circle(screen, Color.RED, world_to_screen(Vector2(query_info.point)), 2)
+                pygame.draw.circle(screen, Color.RED, world_to_screen(Vector2(query_info.point)), 4)
+            else:
+                pygame.draw.circle(screen, Color.BLUE, world_to_screen(Vector2(self.foot_destination)), 4)
+
 
 
     def update(self, dt):
@@ -60,20 +64,24 @@ class Leg():
         if not self.punching:
             self.move_foot()
 
-        self.foot_position = self.foot_position.lerp(self.foot_destination, clamp(0, 1, dt * self.move_speed))
+        print(self.lerping)
+        if self.lerping:
+            dist = max(self.foot_position.distance_to(self.foot_destination), 1)
+            self.foot_position = self.foot_position.lerp(self.foot_destination, clamp(0, 1, dt * self.move_speed * self.length / dist))
+            if dist < 10:
+                self.lerping = False
 
     def move_foot(self):
 
-        self.attach_position = Vector2(self.attached_body.physics_body.position) + self.get_rel_offset()
+        self.attach_position = Vector2(self.attached_body.physics_body.position) + Vector2(self.get_rel_offset()) * 1.1
 
-
-        if self.foot_position.distance_to(self.attach_position) > self.length:
-            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), self.foot_size)
+        if self.foot_position.distance_to(self.attach_position) > self.length or self.lerping:
+            self.lerping = True
+            query_info = physics.segment_query_first(self.attach_position, self.attach_position + (self.direction * self.length), 1, category=physics.Categories.WALL)
             if query_info is None:
                 self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))
             else:
                 self.foot_destination = Vector2(query_info.point)
-                #self.foot_destination = Vector2(collision_point., self.attach_position.y + (self.direction.y * self.length))
 
         if not self.walk:
             self.foot_destination = Vector2(self.attach_position.x + (self.direction.x * self.length), self.attach_position.y + (self.direction.y * self.length))

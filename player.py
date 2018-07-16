@@ -1,22 +1,25 @@
 import pygame
 from pygame.math import Vector2
+import math
 
 from creature import Creature
 import input_manager as InputManager
 from body import Body
 from leg import Leg
+from physics import Categories
 
 class Player(Creature):
 
-    def __init__(self, position, rotation=90, scale=1, size=50, speed=200, turn_speed=5):
+    def __init__(self, position, rotation=90, scale=1, size=50, speed=300, turn_speed=5):
         Creature.__init__(self, position, rotation, scale, size, speed, turn_speed)
 
-        self.head = Body(self, self.position, self.rotation, self.size, self.size, head=True, speed=speed)
+        self.head = Body(self, self.position, self.rotation, self.size, self.size, Categories.PLAYER, head=True, speed=speed)
 
         self.bodies.append(self.head)
 
-        for i in range(5):
-            b = Body(self, self.position, self.rotation, self.size/2, self.size/2, speed=10)
+        for i in range(0):
+            size = self.size
+            b = Body(self, self.position, self.rotation, size, size, Categories.PLAYER, speed=10)
             b.attach_to(self.bodies[i])
             self.bodies.append(b)
         
@@ -28,8 +31,8 @@ class Player(Creature):
         #self.arms.append(arm2)
 
         for body in self.bodies:
-            body.add_leg(Leg(body, self.size, 15, 20, offset=(body.width/2 + 5, 0), foot_size=5))
-            body.add_leg(Leg(body, self.size, -15, 20, offset=(-body.width/2 - 5, 0), foot_size=5))
+            body.add_leg(Leg(body, self.size*2, 15, 15, offset=(body.width/2 + 1, 0), foot_size=3))
+            body.add_leg(Leg(body, self.size*2, -15, 15, offset=(-body.width/2 - 1, 0), foot_size=3))
 
         self.arm_counter = 0
 
